@@ -54,7 +54,10 @@ def load_dataframe():
     if not file_id:
         return None
     file_path = os.path.join(UPLOAD_FOLDER, f"{file_id}.csv")
-    return pd.read_csv(file_path)
+    df = pd.read_csv(file_path)
+    # Filter rows containing "path planning" in any column
+    filtered_df = df[df.astype(str).apply(lambda x: x.str.contains('path planning', case=False)).any(axis=1)]
+    return filtered_df if not filtered_df.empty else df
 
 @app.route("/", methods=["GET", "POST"])
 def upload_csv():
